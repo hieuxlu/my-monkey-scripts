@@ -30,12 +30,13 @@
 })();
 ```
 
-- Note: Có thể review content của script ở trong file [hoadondientu.gdt.gov.vn/DownloadAllInvoices.js](./hoadondientu.gdt.gov.vn/DownloadAllInvoices.js)
+- Note: Có thể review content của script ở trong file [DownloadAllInvoices.js](./hoadondientu.gdt.gov.vn/DownloadAllInvoices.js)
 
 ## Cách sử dụng 
 - Sau khi cài đặt thành công, mở trang "Tra cứu hóa đơn điện tử mua vào", sẽ xuất hiện thêm button "Download All"
 - Thực hiện "Tìm kiếm" để hiển thị kết quả ở bảng bên dưới (sau đó có thể chọn hiện 15,30,50 hóa đơn/trang)  
 - Nhấn Download All để download toàn bộ hóa đơn đang được hiển thị trong trang hiện tại
 - Nếu có lỗi khi download hóa đơn nào đó (thường do lỗi của trang web Hóa Đơn Điện Tử), nhấn Retry để download các hóa đơn bị lỗi
+- Sau khi download xong ở trang 1, nhấn trang tiếp theo, và nhấn Download All lại để download tiếp các hoá đơn trong trang mới
 ![image](https://user-images.githubusercontent.com/11418231/192498862-05f27614-ff7f-4959-b6f5-280fe308e673.png)
 
