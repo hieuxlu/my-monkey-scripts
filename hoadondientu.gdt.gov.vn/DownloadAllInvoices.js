@@ -27,7 +27,10 @@
 
     // Your code here...
     var EXPORT_URL = 'https://hoadondientu.gdt.gov.vn:30000/query/invoices/export-xml';
+    var getExportURL = (baseUrl) => `https://hoadondientu.gdt.gov.vn:30000/${baseUrl || 'query'}/invoices/export-xml`;
     var invoiceTableSelector = '.ant-tabs-content.ant-tabs-top-content > .ant-tabs-tabpane:nth-child(2) > .ant-row .ant-table-wrapper ';
+    var tablistSelector = '.ant-tabs-tabpane-active:contains("Hóa đơn điện tử") *[role=tablist]';
+    var activeTabSelector = '.ant-tabs-tab-active *:contains("Hóa đơn có mã khởi tạo từ máy tính tiền")'
 
     var jwtCookie = await window.cookieStore.get('jwt');
     if (!jwtCookie.value) {
@@ -70,8 +73,8 @@
         downloadDiv.appendChild(errorRow);
 
 
-        var outInvoiceTable = document.querySelector(invoiceTableSelector);
-        outInvoiceTable.parentElement.insertBefore(downloadDiv, outInvoiceTable);
+        var outInvoiceTable = $(tablistSelector);
+        $(downloadDiv).insertBefore(outInvoiceTable);
 
         if (isBrowserSupported) {
             downloadButton.addEventListener('click', handleDownloadAll);
@@ -80,7 +83,13 @@
     }
 
     async function handleDownloadAll() {
-        var outInvoiceTable = document.querySelector(invoiceTableSelector);
+        var outInvoiceTable = $(invoiceTableSelector);
+        var activeTab = $(activeTabSelector, tablistSelector);
+        var baseUrl = 'query';
+        if (activeTab.length > 0) {
+            baseUrl = 'sco-query';
+        }
+
         var tableBody = $('.ant-table-tbody', outInvoiceTable)
 
         var rows = $('tr', tableBody)
@@ -105,7 +114,7 @@
         })
 
         if (currentPageData.length > 0) {
-            await bulkDownloadInvoices(currentPageData)
+            await bulkDownloadInvoices(currentPageData, baseUrl)
         }
     }
 
@@ -113,7 +122,7 @@
         var result = await bulkDownloadInvoices([...failures])
     }
 
-    async function bulkDownloadInvoices(data) {
+    async function bulkDownloadInvoices(data, baseUrl) {
         var result = [];
         failures = [];
         $('.download-retry-link', downloadDiv).css('display', 'none');
@@ -121,7 +130,7 @@
         for (var idx = 0; idx < data.length; idx++) {
             var item = data[idx];
             try {
-                await downloadInvoice(item);
+                await downloadInvoice(item, baseUrl);
                 successes.push(item);
             } catch (error) {
                 console.error(error);
@@ -140,7 +149,7 @@
         return result;
     }
 
-    async function downloadInvoice(req) {
+    async function downloadInvoice(req, baseUrl) {
 
         var urlParams = new URLSearchParams({
             nbmst: req.mstNguoiban,
@@ -149,7 +158,7 @@
             khmshdon: req.kihieumauso
         })
 
-        var response = await fetch(`${EXPORT_URL}?${urlParams.toString()}`, {
+        var response = await fetch(`${getExportURL(baseUrl)}?${urlParams.toString()}`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtCookie.value}`
